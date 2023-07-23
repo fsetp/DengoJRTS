@@ -10,7 +10,6 @@
 #		Rev 1.0:2023-02-25
 #		Rev 1.1:2023-03-04
 #		Rev	1.2:2023-05-07
-#		Rev 1.3:2023-07-23
 #
 from pygame.locals import *
 import pygame
@@ -52,7 +51,7 @@ import sys
 ########################################
 #
 MajorRevision		= 1
-MinorRevision		= 3
+MinorRevision		= 2
 MaxJoystickNum		= 10
 JoystickName		= "One Handle MasCon for Nintendo Switch"
 MasConPos			= (	-1.00,	# EB
@@ -81,8 +80,6 @@ InitialMasConPos	= 3
 BrakeLimit211		= 1
 Train211			= '211'
 TrainE233			= 'E233'
-
-bDebug				= False
 
 ########################################
 # Den-Go controller class
@@ -242,11 +239,9 @@ class dengo():
 	####################################
 	# Update Axis Input
 	#
-	#	bOutput		output gamepad key
+	#	output		output gamepad key
 	#
-	def UpdateAxis(self, bOutput = True):
-
-		bRet = False
+	def UpdateAxis(self, output = True):
 
 		#
 		self.ButtonQueue = []
@@ -299,23 +294,21 @@ class dengo():
 #				self.CurrentMasConIndex = BrakeLimit211
 
 			self._AxisToStep211()
-			if bOutput:
-				bRet = self._MasConAction211()
+			if output:
+				self._MasConAction211()
 
 		################################
 		# Update Master Controller Status for E233
 		#
 		elif self.IsTrainE233:
 			self._AxisToStepE233()
-			if bOutput:
-				bRet = self._MasConActionE233()
+			if output:
+				self._MasConActionE233()
 
 		################################
 		# Update last MasCon index
 		#
 		self.LastMasConIndex = self.CurrentMasConIndex
-
-		return bRet
 
 	####################################
 	# Update Button Input
@@ -477,8 +470,7 @@ class dengo():
 				while self.BreakStep > 0:
 					keyboard.press_and_release(".")
 					self.BreakStep = self.BreakStep - 1
-					if (bDebug):
-						print('.')
+					print('.')
 
 			############################
 			# Decrease Brake Action
@@ -487,10 +479,7 @@ class dengo():
 				while self.BreakStep < 0:
 					keyboard.press_and_release(",")
 					self.BreakStep = self.BreakStep + 1
-					if (bDebug):
-						print(',')
-
-			return True
+					print(',')
 
 		################################
 		# Accel step available ?
@@ -504,8 +493,7 @@ class dengo():
 				while self.AccelStep > 0:
 					keyboard.press_and_release("z")
 					self.AccelStep = self.AccelStep - 1
-					if (bDebug):
-						print('z')
+					print('z')
 
 			############################
 			# Decrease Accel Action
@@ -514,12 +502,7 @@ class dengo():
 				while self.AccelStep < 0:
 					keyboard.press_and_release("a")
 					self.AccelStep = self.AccelStep + 1
-					if (bDebug):
-						print('a')
-
-			return True
-
-		return False
+					print('a')
 
 	####################################
 	# Make keycode for E233 accel and brake control
@@ -538,8 +521,7 @@ class dengo():
 				while self.AccelStep > 0:
 					keyboard.press_and_release("z")
 					self.AccelStep = self.AccelStep - 1
-					if (bDebug):
-						print('z')
+					print('z')
 
 			############################
 			# Decrease Accel Action
@@ -548,12 +530,7 @@ class dengo():
 				while self.AccelStep < 0:
 					keyboard.press_and_release("q")
 					self.AccelStep = self.AccelStep + 1
-					if (bDebug):
-						print('q')
-
-			return True
-
-		return False
+					print('q')
 
 	####################################
 	# Key translate action for 211
@@ -571,8 +548,7 @@ class dengo():
 			#
 			if b == 'SW_Y':
 				keyboard.press_and_release("t")
-				if (bDebug):
-					print('t')
+				print('t')
 
 			############################
 			# Change Train to E233
@@ -591,8 +567,7 @@ class dengo():
 			#
 			elif b == 'SW_X':
 				keyboard.press_and_release("c")
-				if (bDebug):
-					print('c')
+				print('c')
 
 			elif b == 'SW_L':
 				pass
@@ -602,8 +577,7 @@ class dengo():
 			#
 			elif b == 'SW_R':
 				keyboard.press_and_release("x")
-				if (bDebug):
-					print('x')
+				print('x')
 
 			############################
 			# Emergency Brake (EB)
@@ -611,8 +585,7 @@ class dengo():
 			#
 			elif b == 'SW_ZL':
 				keyboard.press_and_release("1")
-				if (bDebug):
-					print('1')
+				print('1')
 
 			############################
 			# ATS Check
@@ -641,8 +614,7 @@ class dengo():
 			#
 			if b == 'SW_Y':
 				keyboard.press_and_release("t")
-				if (bDebug):
-					print('t')
+				print('t')
 
 			############################
 			# Change Train to E233
@@ -661,8 +633,7 @@ class dengo():
 			#
 			elif b == 'SW_X':
 				keyboard.press_and_release("c")
-				if (bDebug):
-					print('c')
+				print('c')
 
 			elif b == 'SW_L':
 				pass
@@ -672,16 +643,14 @@ class dengo():
 			#
 			elif b == 'SW_R':
 				keyboard.press_and_release("x")
-				if (bDebug):
-					print('x')
+				print('x')
 
 			############################
 			# Emergency Brake (EB)
 			#
 			elif b == 'SW_ZL':
 				keyboard.press_and_release("1")
-				if (bDebug):
-					print('1')
+				print('1')
 
 			############################
 			# ATS Check
@@ -786,8 +755,8 @@ def main():
 
 			############################
 			#
-			if (den.UpdateAxis()):
-				print(den.GetMasConKnotchText())
+			den.UpdateAxis()
+#			print(den.GetMasConKnotchText())
 #			print(den.GetButtons())
 
 			den.UpdateButton()
